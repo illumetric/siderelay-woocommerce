@@ -1,0 +1,30 @@
+{
+  "name": "siderelay/woocommerce",
+  "description": "SideRelay tracking for WooCommerce",
+  "type": "wordpress-plugin",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2",
+    "ext-openssl": "*",
+    "siderelay/php": "^0.1.1"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/illumetric/siderelay-php"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "SideRelay\\WooCommerce\\": "src/"
+    }
+  },
+  "config": {
+    "platform": {
+      "php": "8.2.0"
+    }
+  },
+  "scripts": {
+    "test": "php tests/run.php"
+  }
+}

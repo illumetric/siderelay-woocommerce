@@ -1,0 +1,17 @@
+name: Plugin checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, mbstring, openssl
+      - run: composer validate --strict
+      - run: composer install --no-dev --prefer-dist
+      - run: php tests/run.php
+      - run: find . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l

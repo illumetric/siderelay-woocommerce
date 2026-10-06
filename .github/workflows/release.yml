@@ -1,0 +1,27 @@
+name: Preview ZIP
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, mbstring, openssl
+      - run: composer install --no-dev --prefer-dist --optimize-autoloader
+      - run: php tests/run.php
+      - run: |
+          mkdir -p build/siderelay-woocommerce
+          cp siderelay.php LICENSE README.md build/siderelay-woocommerce/
+          cp -R src vendor build/siderelay-woocommerce/
+          find build -type d -name .git -prune -exec rm -rf '{}' +
+          cd build
+          zip -qr siderelay-woocommerce.zip siderelay-woocommerce
+      - run: gh release create "$GITHUB_REF_NAME" build/siderelay-woocommerce.zip --prerelease --title "WooCommerce preview $GITHUB_REF_NAME" --notes "Preview source and installable ZIP. Verify checkout, privacy handoff and the native queue on a test store before customer rollout."
+        env:
+          GH_TOKEN: ${{ github.token }}
